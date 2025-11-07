@@ -52,7 +52,7 @@ jobs:
       - name: Build package
         run: |
           . /opt/venv/bin/activate
-          python3 -m build
+          uv build
       
       - name: Publish to PyPI
         env:
