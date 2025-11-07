@@ -35,18 +35,18 @@ jobs:
       - name: Generate cloud_init_models source directory
         run: |
           . /opt/venv/bin/activate
-          # Create the source directory
-          mkdir -p cloud_init_models
           # Generate models from cloud-init schemas
           # The actual schema location will depend on cloud-init installation
           if [ -d "/usr/lib/python3/dist-packages/cloudinit" ]; then
             echo "Cloud-init found, generating models..."
             # Find cloud-init schema files and generate models
-            # This is a placeholder - actual implementation may vary based on cloud-init structure
-            datamodel-codegen --help || echo "datamodel-codegen installed successfully"
+            # Example: datamodel-codegen --input /path/to/schemas --output cloud_init_models
+            # TODO: Implement actual schema generation based on cloud-init structure
+            # For now, using the committed package structure
+            echo "Using committed package structure"
+          else
+            echo "Warning: cloud-init not found at expected location"
           fi
-          # Add __init__.py to make it a package
-          touch cloud_init_models/__init__.py
       
       - name: Build package
         run: |
