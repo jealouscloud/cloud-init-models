@@ -33,7 +33,7 @@ jobs:
       - name: Install datamodel-code-generator and build tools
         run: |
           . /opt/venv/bin/activate
-          uv pip install datamodel-code-generator build twine
+          uv pip install datamodel-code-generator build
       
       - name: Generate cloud_init_models source directory
         run: |
@@ -58,8 +58,7 @@ jobs:
       
       - name: Publish to PyPI
         env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           . /opt/venv/bin/activate
-          python3 -m twine upload dist/*
+          uv publish
