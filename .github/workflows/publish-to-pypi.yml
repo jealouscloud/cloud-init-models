@@ -34,6 +34,7 @@ jobs:
         run: |
           . /opt/venv/bin/activate
           uv sync
+          uv add datamodel-code-generator
       
       - name: Generate cloud_init_models source directory
         run: |
