@@ -42,3 +42,6 @@ venv.bak/
 .coverage
 htmlcov/
 .tox/
+
+# generated
+cloud_init_models/models/*.py

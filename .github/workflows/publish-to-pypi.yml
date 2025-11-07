@@ -33,23 +33,20 @@ jobs:
       - name: Install datamodel-code-generator and build tools
         run: |
           . /opt/venv/bin/activate
-          uv pip install datamodel-code-generator build
+          uv sync
       
       - name: Generate cloud_init_models source directory
         run: |
           . /opt/venv/bin/activate
           # Generate models from cloud-init schemas
-          # The actual schema location will depend on cloud-init installation
-          if [ -d "/usr/lib/python3/dist-packages/cloudinit" ]; then
-            echo "Cloud-init found, generating models..."
-            # Find cloud-init schema files and generate models
-            # Example: datamodel-codegen --input /path/to/schemas --output cloud_init_models
-            # TODO: Implement actual schema generation based on cloud-init structure
-            # For now, using the committed package structure
-            echo "Using committed package structure"
-          else
-            echo "Warning: cloud-init not found at expected location"
+          cfg=$(dpkg -L cloud-init | grep cloud-config-v1.json)
+          if [[ -z "$cfg" ]]; then
+            echo "Error: cloud-config-v1.json not found"
+            exit 1
           fi
+          cp "$cfg" ./schema.json
+          uv run  datamodel-codegen --input ./schema.json --input-file-type jsonschema  --output-model-type typing.TypedDict --output cloud_init_models/models/
+          
       
       - name: Build package
         run: |
