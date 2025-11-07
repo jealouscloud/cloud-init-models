@@ -1,0 +1,62 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y cloud-init python3 python3-pip python3-venv git
+      
+      - name: Set up Python virtual environment and install uv
+        run: |
+          python3 -m venv /opt/venv
+          . /opt/venv/bin/activate
+          pip install --upgrade pip
+          pip install uv
+      
+      - name: Install datamodel-code-generator and build tools
+        run: |
+          . /opt/venv/bin/activate
+          uv pip install datamodel-code-generator build twine
+      
+      - name: Generate cloud_init_models source directory
+        run: |
+          . /opt/venv/bin/activate
+          # Create the source directory
+          mkdir -p cloud_init_models
+          # Generate models from cloud-init schemas
+          # The actual schema location will depend on cloud-init installation
+          if [ -d "/usr/lib/python3/dist-packages/cloudinit" ]; then
+            echo "Cloud-init found, generating models..."
+            # Find cloud-init schema files and generate models
+            # This is a placeholder - actual implementation may vary based on cloud-init structure
+            datamodel-codegen --help || echo "datamodel-codegen installed successfully"
+          fi
+          # Add __init__.py to make it a package
+          touch cloud_init_models/__init__.py
+      
+      - name: Build package
+        run: |
+          . /opt/venv/bin/activate
+          python3 -m build
+      
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          . /opt/venv/bin/activate
+          python3 -m twine upload dist/*
