@@ -46,7 +46,10 @@ jobs:
             exit 1
           fi
           cp "$cfg" ./schema.json
-          uv run  datamodel-codegen --input ./schema.json --input-file-type jsonschema  --output-model-type typing.TypedDict --output cloud_init_models/models/
+          uv run  datamodel-codegen --input ./schema.json \
+          --input-file-type jsonschema  --output-model-type typing.TypedDict \
+          --output cloud_init_models/ \
+          --class-name CloudInit --force-optional  --target-python-version 3.9
           
       
       - name: Build package
